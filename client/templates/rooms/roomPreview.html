@@ -1,0 +1,20 @@
+<template name="roomPreview">
+    <a href="{{pathFor route="room.view" data=this}}" class="list-group-item room-items-item">
+        <h4>
+            {{name}}
+            <small>
+                {{#with author}}
+                    {{name.first}} {{name.last}}
+                {{/with}}
+            </small>
+        </h4>
+
+        <div class="panel panel-default room-items-item-last-message">
+            <div class="panel-body">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi aperiam eos facere libero quas
+                quibusdam quis soluta? Ea labore necessitatibus numquam officiis quia rerum sapiente vero voluptatem.
+                Fugit, placeat?
+            </div>
+        </div>
+    </a>
+</template>

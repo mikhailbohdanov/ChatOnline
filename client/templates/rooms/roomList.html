@@ -1,0 +1,9 @@
+<template name="roomList">
+    {{> roomHeader}}
+
+    <div class="list-group room-item-list">
+        {{#each this}}
+            {{> roomPreview}}
+        {{/each}}
+    </div>
+</template>
