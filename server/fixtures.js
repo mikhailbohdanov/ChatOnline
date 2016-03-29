@@ -5,6 +5,7 @@
 var users = {};
 var rooms = {};
 var emptyObj = {};
+var now = new Date().getTime();
 
 if (Users.find().count() === 0) {
     users.admin = Users.insert({
@@ -59,17 +60,20 @@ if (Users.find().count() === 0) {
 if (Rooms.find().count() === 0) {
     rooms.AngularJS     = Rooms.insert({
         name        : 'AngularJS',
-        authorId    : users.admin
+        authorId    : users.admin,
+        created     : now - (31 * 24 * 3600 * 1000)
     });
 
     rooms.MeteorJS      = Rooms.insert({
         name        : 'MeteorJS',
-        authorId    : users.admin
+        authorId    : users.admin,
+        created     : now - (31 * 24 * 3600 * 1000)
     });
 
     rooms.BackboneJS    = Rooms.insert({
         name        : 'BackboneJS',
-        authorId    : users.admin
+        authorId    : users.admin,
+        created     : now - (31 * 24 * 3600 * 1000)
     });
 } else {
     rooms.AngularJS     = Rooms.findOne(emptyObj, {
@@ -92,18 +96,21 @@ if (Messages.find().count() === 0) {
     Messages.insert({
         authorId    : users.user1,
         roomId      : rooms.AngularJS,
-        message     : 'AngularJS the best'
+        message     : 'AngularJS the best',
+        created     : now - (25 * 24 * 3600 * 1000)
     });
 
     Messages.insert({
         authorId    : users.user2,
         roomId      : rooms.MeteorJS,
-        message     : 'MeteorJS the best'
+        message     : 'MeteorJS the best',
+        created     : now - (24 * 24 * 3600 * 1000)
     });
 
     Messages.insert({
         authorId    : users.user3,
         roomId      : rooms.BackboneJS,
-        message     : 'BackboneJS the best'
+        message     : 'BackboneJS the best',
+        created     : now - (23 * 24 * 3600 * 1000)
     });
 }

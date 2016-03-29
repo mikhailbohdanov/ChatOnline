@@ -3,17 +3,17 @@
         <h4>
             {{name}}
             <small>
-                {{#with author}}
+                {{#each author}}
                     {{name.first}} {{name.last}}
-                {{/with}}
+                {{/each}}
             </small>
         </h4>
 
         <div class="panel panel-default room-items-item-last-message">
             <div class="panel-body">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi aperiam eos facere libero quas
-                quibusdam quis soluta? Ea labore necessitatibus numquam officiis quia rerum sapiente vero voluptatem.
-                Fugit, placeat?
+                {{#with lastMessage}}
+                    {{> messagePreview}}
+                {{/with}}
             </div>
         </div>
     </a>

@@ -29,3 +29,10 @@ html, body {
 .room-items .room-item-open {
     margin: 5px 0px 5px 5px;
 }
+
+
+.message-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

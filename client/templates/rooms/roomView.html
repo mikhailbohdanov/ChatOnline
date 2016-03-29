@@ -1,3 +1,29 @@
 <template name="roomView">
+    {{> roomHeader}}
+
+    <div class="panel panel-default room-items clearfix">
+        {{#each roomsOpen}}
+            <a class="btn btn-default btn-sm room-item-open pull-left {{isRoute route='room.view' textTrue='active' data=roomData}}" href="{{pathFor route='room.view' data=this}}" role="button">
+                {{name}}
+                {{#if notReadMessages.count}}<span class="badge">{{notReadMessages.count}}</span>{{/if}}
+                {{{messages.count}}}
+                <span class="glyphicon glyphicon-remove room-item-exit" aria="hidden"></span>
+            </a>
+        {{/each}}
+    </div>
+
+    <div class="row clearfix">
+        {{#each messages}}
+        <!--{{#if read}}-->
+            {{> message}}
+                <!--{{/if}}-->
+        {{/each}}
+
+        {{#if notReadMessages.count}}
+            {{#each notReadMessages}}
+
+            {{/each}}
+        {{/if}}
+    </div>
 
 </template>

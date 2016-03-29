@@ -28,19 +28,7 @@ _.extend(RoomsOpen, {
     }
 });
 
-//// - - - - Loaded local users collection
-_.extend(Users, {
-    userIds         : [],
-    get             : function(userId) {
-        if (this.userIds.indexOf(userId) < 0) {
-            this.loadRemoteUser(userId);
-        }
 
-        return this.findOne(userId);
-    },
-    loadRemoteUser  : function(userId) {
-        this.userIds.push(userId);
-        Meteor.subscribe('users', this.userIds);
-    }
-});
+
+LastRoomMessages = new Meteor.Collection('lastRoomMessages');
 
