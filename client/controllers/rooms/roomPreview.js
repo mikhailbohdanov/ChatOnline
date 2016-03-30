@@ -9,8 +9,5 @@ Template.roomPreview.helpers({
         }, {
             limit   : 1
         });
-    },
-    lastMessage : function() {
-        return LastRoomMessages.findOne(this._id);
     }
 });

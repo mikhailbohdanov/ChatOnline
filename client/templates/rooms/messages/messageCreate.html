@@ -1,0 +1,15 @@
+<template name="messageCreate">
+    <form class="form">
+        <input type="hidden" id="roomId" value="{{roomId}}">
+        <table class="table">
+            <tr class="row">
+                <td class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                    <textarea id="messageBody" class="form-control" data-min="1" data-max="5"></textarea>
+                </td>
+                <td class="col-xs-12 col-sm-2 col-md-2 col-lg-2 send-message-block">
+                    <button id="sendMessage" class="btn btn-primary btn-block">Send</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</template>

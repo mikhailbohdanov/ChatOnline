@@ -8,51 +8,13 @@ var emptyObj = {};
 var now = new Date().getTime();
 
 if (Users.find().count() === 0) {
-    users.admin = Users.insert({
-        name    : {
-            first   : 'Admin',
-            last    : 'Admin'
-        }
-    });
-
-    users.user1 = Users.insert({
-        name    : {
-            first   : 'Some',
-            last    : 'User1'
-        }
-    });
-
-    users.user2 = Users.insert({
-        name    : {
-            first   : 'Some',
-            last    : 'User2'
-        }
-    });
-
-    users.user3 = Users.insert({
-        name    : {
-            first   : 'Some',
-            last    : 'User3'
-        }
+    users.admin = Accounts.createUser({
+        username    : 'Admin',
+        password    : 'Admin'
     });
 } else {
     users.admin = Users.findOne(emptyObj, {
         skip    : 0,
-        limit   : 1
-    })._id;
-
-    users.user1 = Users.findOne(emptyObj, {
-        skip    : 1,
-        limit   : 1
-    })._id;
-
-    users.user2 = Users.findOne(emptyObj, {
-        skip    : 2,
-        limit   : 1
-    })._id;
-
-    users.user3 = Users.findOne(emptyObj, {
-        skip    : 3,
         limit   : 1
     })._id;
 }
@@ -94,21 +56,21 @@ if (Rooms.find().count() === 0) {
 
 if (Messages.find().count() === 0) {
     Messages.insert({
-        authorId    : users.user1,
+        authorId    : users.admin,
         roomId      : rooms.AngularJS,
         message     : 'AngularJS the best',
         created     : now - (25 * 24 * 3600 * 1000)
     });
 
     Messages.insert({
-        authorId    : users.user2,
+        authorId    : users.admin,
         roomId      : rooms.MeteorJS,
         message     : 'MeteorJS the best',
         created     : now - (24 * 24 * 3600 * 1000)
     });
 
     Messages.insert({
-        authorId    : users.user3,
+        authorId    : users.admin,
         roomId      : rooms.BackboneJS,
         message     : 'BackboneJS the best',
         created     : now - (23 * 24 * 3600 * 1000)

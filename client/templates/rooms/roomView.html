@@ -5,25 +5,29 @@
         {{#each roomsOpen}}
             <a class="btn btn-default btn-sm room-item-open pull-left {{isRoute route='room.view' textTrue='active' data=roomData}}" href="{{pathFor route='room.view' data=this}}" role="button">
                 {{name}}
-                {{#if notReadMessages.count}}<span class="badge">{{notReadMessages.count}}</span>{{/if}}
-                {{{messages.count}}}
+                {{#if messagesNotRead.count}}<span class="badge">{{messagesNotRead.count}}</span>{{/if}}
                 <span class="glyphicon glyphicon-remove room-item-exit" aria="hidden"></span>
             </a>
         {{/each}}
     </div>
 
     <div class="row clearfix">
-        {{#each messages}}
-        <!--{{#if read}}-->
-            {{> message}}
-                <!--{{/if}}-->
+        {{#each messagesRead}}
+            <!--{{#if read}}-->
+                {{> messageView}}
+            <!--{{/if}}-->
         {{/each}}
 
-        {{#if notReadMessages.count}}
-            {{#each notReadMessages}}
+        {{#if messagesNotRead.count}}
+            {{#each messagesNotRead}}
 
             {{/each}}
         {{/if}}
     </div>
 
+    <div class="message-create-form">
+        {{#if currentUser}}
+            {{> messageCreate}}
+        {{/if}}
+    </div>
 </template>

@@ -3,12 +3,12 @@
  */
 
 Template.roomHeader.helpers({
-    isRoute     : isRoute,
+    isRoute     : isRouteTemplate,
     roomsOpen   : function() {
         return RoomsOpen.find();
     },
     roomLast    : function() {
-        return RoomsOpen.findOne();
+        return RoomsOpen.findOne(Session.get('currentRoomId')) || RoomsOpen.findOne();
     }
 });
 

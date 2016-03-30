@@ -3,7 +3,7 @@
  */
 
 Template.roomView.helpers({
-    isRoute     : isRoute,
+    isRoute     : isRouteTemplate,
     roomsOpen   : function() {
         return RoomsOpen.find();
     },
@@ -12,10 +12,15 @@ Template.roomView.helpers({
             _id : this._id
         };
     },
-    messages    : function() {
+    messagesNotRead : function() {
+        return Messages.find({
+            roomId  : this._id + 1
+        });
+    },
+    messagesRead    : function() {
         return Messages.find({
             roomId  : this._id
-        })
+        });
     }
 });
 
@@ -23,16 +28,6 @@ Template.roomView.events({//TODO need fix this case, on close last chat room, ro
     'click .room-item-exit': function (e) {
         e.preventDefault();
 
-        RoomsOpen.remove(this._id);
-
-        if (RoomsOpen.find().count()) {
-            var firstRoom = RoomsOpen.findOne();
-
-            Router.go('room.view', {
-                _id: firstRoom._id
-            });
-        } else {
-            Router.go('room.list');
-        }
+        RoomsOpen.close(this._id);
     }
 });

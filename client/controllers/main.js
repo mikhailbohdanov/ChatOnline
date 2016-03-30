@@ -5,30 +5,43 @@
 //// - - - - Open rooms collection
 RoomsOpen = new Meteor.Collection(null);
 _.extend(RoomsOpen, {
+    subscribers : {},
     open    : function(roomId) {
         var room = Rooms.findOne(roomId);
 
         try {
             this.insert(room);
+            this.subscribe(roomId);
         } catch (e) {}
 
-        this.reloadMessages();
+        Session.set('currentRoomId', roomId);
 
         return room;
     },
-    close   : function(roomId) {
-        this.remove(roomId);
-
-        this.reloadMessages();
+    subscribe   : function(roomId) {
+        setTimeout(function() {
+            this.subscribers[roomId] = Meteor.subscribe('roomMessages', roomId);
+        }.bind(this), 0);
     },
-    reloadMessages  : function() {
-        var roomIds = lodash.map(this.find().fetch(), '_id');
+    close       : function(roomId) {
+        this.remove(roomId);
+        this.unsubscribe(roomId);
 
-        Meteor.subscribe('roomMessages', roomIds);
+        if (this.find().count()) {
+            var firstRoom = this.findOne();
+
+            Router.go('room.view', {
+                _id: firstRoom._id
+            });
+        } else {
+            Router.go('room.list');
+        }
+    },
+    unsubscribe : function(roomId) {
+        if (this.subscribers[roomId]) {
+            this.subscribers[roomId].stop();
+        }
+
+        delete this.subscribers[roomId];
     }
 });
-
-
-
-LastRoomMessages = new Meteor.Collection('lastRoomMessages');
-

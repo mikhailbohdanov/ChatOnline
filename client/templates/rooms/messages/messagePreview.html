@@ -2,11 +2,11 @@
     <div class="message-line">
         <div>
             {{#each author}}
-                <strong>{{name.first}} {{name.last}}: </strong>
+                <strong>{{email}}: </strong>
             {{/each}}
             ({{messageDate}})
         </div>
 
-        {{message}}
+        {{{message}}}
     </div>
 </template>

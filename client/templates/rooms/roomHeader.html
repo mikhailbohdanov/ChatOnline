@@ -2,6 +2,6 @@
     <ul class="nav nav-tabs">
         <li role="presentation" class="{{isRoute route='room.list' textTrue='active'}}"><a href="{{pathFor route='room.list'}}">All rooms</a></li>
         {{#if roomsOpen.count}}<li role="presentation" class="{{isRoute route='room.view' textTrue='active'}}"><a href="{{pathFor 'room.view' data=roomLast}}">Open rooms {{roomsOpen.count}}</a></li>{{/if}}
-        <li class="pull-right"><button type="button" class="btn btn-primary create-new-room">New room</button></li>
+        {{#if currentUser}}<li class="pull-right"><button type="button" class="btn btn-primary create-new-room">New room</button></li>{{/if}}
     </ul>
 </template>

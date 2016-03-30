@@ -1,8 +1,8 @@
 /**
- * Created by Mykhailo_Bohdanov on 24/03/2016.
+ * Created by Mykhailo_Bohdanov on 30/03/2016.
  */
 
-Template.messagePreview.helpers({
+Template.messageView.helpers({
     author      : function() {
         return Users.find({
             _id     : this.authorId
@@ -12,5 +12,12 @@ Template.messagePreview.helpers({
     },
     messageDate : function() {
         return moment(this.created).format('HH:mm DD MMM YYYY');
+    },
+    myMessage   : function(returned) {
+        var userId = Meteor.userId();
+
+        if (userId && userId === this.authorId) {
+            return returned;
+        }
     }
 });
