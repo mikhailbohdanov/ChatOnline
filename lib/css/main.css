@@ -19,44 +19,57 @@ html, body {
     height: 100%;
 }
 
+/* - - - Main - - - */
+#mainLayout {
+    min-height: 100%;
+    width: 100%;
+}
+
 .header {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-top: none;
 }
 
-#mainLayout {
-    min-height: 100%;
-    width: 100%;
-}
-#sendMessage {
-    height: 100%;
-}
-
+/* - - - Rooms - - - */
 .room-item-list {
     padding-top: 5px;
 }
+.room-item-list-item > h4 {
+    margin-top: 5px;
+}
+.room-item-list-item > .last-message {
+    margin-bottom: 5px;
+}
+.room-item-list-item .panel-body {
+    padding: 10px;
+}
 
-.room-items {
+.room-open-list {
     border-top: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     margin-bottom: 10px;
 }
-
-.room-items-item > h4 {
-    margin-top: 5px;
-}
-.room-items-item > .room-item-last-message {
-    margin-bottom: 5px;
-}
-
-.room-items-item .panel-body {
-    padding: 10px;
-}
-
-.room-items .room-item-open {
+.room-open-list .room-open-list-item {
     margin: 5px 0px 5px 5px;
+}
+
+
+
+/* - - - Messages - - - */
+.message-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-top: 20px;
+}
+
+.message-view-body {
+    word-wrap: break-word;
+}
+
+#sendMessage {
+    height: 100%;
 }
 
 .message-line {
@@ -87,3 +100,4 @@ html, body {
     right: 0;
     bottom: 0;
 }
+

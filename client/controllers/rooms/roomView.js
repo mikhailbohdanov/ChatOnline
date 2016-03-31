@@ -24,7 +24,7 @@ Template.roomView.helpers({
     }
 });
 
-Template.roomView.events({//TODO need fix this case, on close last chat room, room has open
+Template.roomView.events({
     'click .room-item-exit': function (e) {
         e.preventDefault();
 

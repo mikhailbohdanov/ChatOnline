@@ -7,13 +7,13 @@ var rooms = {};
 var emptyObj = {};
 var now = new Date().getTime();
 
-if (Users.find().count() === 0) {
+if (Meteor.users.find().count() === 0) {
     users.admin = Accounts.createUser({
         username    : 'Admin',
         password    : 'Admin'
     });
 } else {
-    users.admin = Users.findOne(emptyObj, {
+    users.admin = Meteor.users.findOne(emptyObj, {
         skip    : 0,
         limit   : 1
     })._id;

@@ -1,9 +1,9 @@
 <template name="roomView">
     {{> roomHeader}}
 
-    <div class="panel panel-default room-items clearfix">
+    <div class="panel panel-default room-open-list clearfix">
         {{#each roomsOpen}}
-            <a class="btn btn-default btn-sm room-item-open pull-left {{isRoute route='room.view' textTrue='active' data=roomData}}" href="{{pathFor route='room.view' data=this}}" role="button">
+            <a class="btn btn-default btn-sm room-open-list-item pull-left {{isRoute route='room.view' textTrue='active' data=roomData}}" href="{{pathFor route='room.view' data=this}}" role="button">
                 {{name}}
                 {{#if messagesNotRead.count}}<span class="badge">{{messagesNotRead.count}}</span>{{/if}}
                 <span class="glyphicon glyphicon-remove room-item-exit" aria="hidden"></span>
@@ -11,7 +11,7 @@
         {{/each}}
     </div>
 
-    <div class="row clearfix">
+    <div id="messageList" class="row clearfix message-list">
         {{#each messagesRead}}
             <!--{{#if read}}-->
                 {{> messageView}}

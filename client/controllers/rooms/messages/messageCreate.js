@@ -63,5 +63,29 @@ Template.messageCreate.rendered = function() {
     $messageBody    = $('#messageBody');
     $roomId         = $('#roomId');
 
-    $messageBody.autoHeight().focus();
+    var $messageList    = $('#messageList'),
+        $window         = $(window),
+        offsets         = 0,
+        magicHeight     = 40;
+
+    $window.on('resize orientationChange', function() {
+        var offsetTop       = $messageList.offset().top,
+            paddingTop      = parseInt($messageList.css('paddingTop'), 10),
+            paddingBottom   = parseInt($messageList.css('paddingBottom'), 10);
+
+        offsets = offsetTop + paddingTop + paddingBottom + magicHeight;
+    }).trigger('resize');
+
+    $messageBody.autoHeight({
+        changeHeight    : function(size) {
+            $messageList.height($window.outerHeight(true) - offsets - size.mainHeight);
+        }
+    }).focus();
+
+    $messageList.autoScroll({
+        scrollTo    : -1,
+        scrollOnTop : function() {
+
+        }
+    });
 };
