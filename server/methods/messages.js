@@ -18,6 +18,7 @@ Meteor.methods({
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
+                .replace(/\n{3,}/gi, '\n\n')
                 .replace(/\n/gi, '<br/>')
                 .replace(/\s{2,}/gi, ' '),
             created     : new Date().getTime()

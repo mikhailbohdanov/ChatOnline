@@ -64,11 +64,11 @@ Template.messageCreate.rendered = function() {
     $roomId         = $('#roomId');
 
     var $messageList    = $('#messageList'),
-        $window         = $(window),
+        $document       = $(document),
         offsets         = 0,
         magicHeight     = 40;
 
-    $window.on('resize orientationChange', function() {
+    $document.on('resize orientationChange', function() {
         var offsetTop       = $messageList.offset().top,
             paddingTop      = parseInt($messageList.css('paddingTop'), 10),
             paddingBottom   = parseInt($messageList.css('paddingBottom'), 10);
@@ -76,16 +76,29 @@ Template.messageCreate.rendered = function() {
         offsets = offsetTop + paddingTop + paddingBottom + magicHeight;
     }).trigger('resize');
 
+    $messageList.autoScroll({
+        scrollTo    : -1,
+        scrollOn    : function(scrollData) {
+            console.log('scrolled', scrollData);
+        },
+        scrollOnTop : function(scrollData) {
+            console.log('load more messages', scrollData);
+        }
+    });
+
     $messageBody.autoHeight({
         changeHeight    : function(size) {
-            $messageList.height($window.outerHeight(true) - offsets - size.mainHeight);
+            $messageList
+                .height($document.outerHeight(true) - offsets - size.mainHeight)
+                .autoScroll('scroll');
         }
     }).focus();
 
-    $messageList.autoScroll({
-        scrollTo    : -1,
-        scrollOnTop : function() {
-
+    Messages.find({
+        roomId  : $roomId.val()
+    }).observe({
+        added   : function() {
+            $messageList.autoScroll('scroll');
         }
-    });
+    })
 };

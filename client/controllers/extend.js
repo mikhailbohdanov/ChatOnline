@@ -89,14 +89,113 @@
 })(jQuery);
 
 (function($) {
-    $.fn.autoScroll = function(options) {
-        if (this.data('autoScroll') !== 'inited') {
+    function load($el) {
+        return $el.data('autoHeight');
+    }
+    function save($el, data) {
+        return $el.data('autoHeight', data);
+    }
 
+    var methods = {
+        init        : function(options) {
+            var $self   = this,
+                data    = load($self);
 
-            this
-                .data('autoScroll', 'inited');
+            if (!data) {
+                options = _.extend({}, $.fn.autoScroll.defaults, options);
+
+                data    = {
+                    currentScroll   : 0,
+                    currentHeight   : 0,
+                    maxScroll       : 0,
+                    options         : options
+                };
+
+                $self
+                    .on('scroll', function() {
+                        var update  = {
+                            currentScroll   : this.scrollTop,
+                            maxScroll       : this.scrollHeight,
+                            currentHeight   : $self.outerHeight(true)
+                        };
+
+                        _.extend(data, update);
+
+                        if (data.inited && data.options.scrollOn) {
+                            data.options.scrollOn.call($self, update);
+                        }
+
+                        if (data.inited && data.options.scrollOnTop && data.currentScroll == 0) {
+                            data.options.scrollOnTop.call($self, update);
+                        }
+
+                        save($self, data);
+                    })
+                    .trigger('scroll');
+
+                methods.scrollTo.call($self, data.options.scrollTo, data);
+
+                data.inited = true;
+            }
+
+            return save(this, data);
+        },
+        scroll      : function(data) {
+            if (!data) {
+                data    = load(this);
+            }
+
+            if (data.maxScroll - data.currentHeight == data.currentScroll) {
+                methods.scrollTo.call(this, this[0].scrollHeight);
+            }
+        },
+        scrollTo    : function(to, data) {
+            if (!data) {
+                data    = load(this);
+            }
+
+            if (_.isNumber(to)) {
+                if (to < 0) {
+                    to = data.maxScroll - data.currentHeight;
+                }
+
+                this
+                    .stop()
+                    .animate({
+                        scrollTop   : to
+                    }, data.options.scrollSpeed);
+            } else if (_.isObject(to)) {
+                methods.scrollTo.call(this, $(to).offset().top - this.offset().top, data);
+            }
+        }
+    };
+
+    $.fn.autoScroll = function(method, options) {
+        var args;
+
+        if (_.isString(method)) {
+            args    = Array.prototype.slice.call(arguments, 1);
+        } else {
+            args    = Array.prototype.slice.call(arguments, 0);
+            method  = 'init';
         }
 
-        return this.trigger('scroll');
+        return this.each(function() {
+            var $this   = $(this);
+
+            if (methods[method]) {
+                methods[method].apply($this, args);
+            } else {
+                methods.init.apply($this, args);
+            }
+        });
+    };
+
+    $.fn.autoScroll.defaults = {
+        inited      : false,
+        scrollTo    : -1,
+        scrollOn    : null,
+        scrollOnTop : null,
+        scrollSpeed : 200
     };
 })(jQuery);
