@@ -122,18 +122,18 @@
                         _.extend(data, update);
 
                         if (data.inited && data.options.scrollOn) {
-                            data.options.scrollOn.call($self, update);
+                            data.options.scrollOn.call($self, update, data);
                         }
 
                         if (data.inited && data.options.scrollOnTop && data.currentScroll == 0) {
-                            data.options.scrollOnTop.call($self, update);
+                            data.options.scrollOnTop.call($self, update, data);
                         }
 
                         save($self, data);
                     })
                     .trigger('scroll');
 
-                methods.scrollTo.call($self, data.options.scrollTo, data);
+                methods.scrollTo.call($self, data.options.scrollTo, data, true);
 
                 data.inited = true;
             }
@@ -145,13 +145,25 @@
                 data    = load(this);
             }
 
+            if (!data) {
+                return;
+            }
+
             if (data.maxScroll - data.currentHeight == data.currentScroll) {
                 methods.scrollTo.call(this, this[0].scrollHeight);
             }
         },
-        scrollTo    : function(to, data) {
+        scrollTo    : function(to, data, animateOff) {
+            if (_.isBoolean(data)) {
+                animateOff = data;
+            }
+
             if (!data) {
                 data    = load(this);
+            }
+
+            if (!data) {
+                return;
             }
 
             if (_.isNumber(to)) {
@@ -159,14 +171,33 @@
                     to = data.maxScroll - data.currentHeight;
                 }
 
-                this
-                    .stop()
-                    .animate({
-                        scrollTop   : to
-                    }, data.options.scrollSpeed);
+                if (!animateOff) {
+                    this
+                        .stop()
+                        .animate({
+                            scrollTop   : to
+                        }, data.options.scrollSpeed);
+                } else {
+                    this
+                        .stop()
+                        .scrollTop(to);
+                }
             } else if (_.isObject(to)) {
-                methods.scrollTo.call(this, $(to).offset().top - this.offset().top, data);
+                methods.scrollTo.call(this, $(to).offset().top - this.offset().top, data, animateOff);
             }
+        },
+        scrollTopOffset : function(data) {
+            if (!data) {
+                data    = load(this);
+            }
+
+            if (!data) {
+                return;
+            }
+
+            var scrollOffset = this[0].scrollHeight - data.maxScroll;
+
+            console.log(data, scrollOffset, this);
         }
     };
 

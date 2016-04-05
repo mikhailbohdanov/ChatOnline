@@ -2,8 +2,8 @@
  * Created by Mykhailo_Bohdanov on 30/03/2016.
  */
 
-var $messageBody    = null,
-    $roomId         = null;
+var watchRooms          = null;
+    $messageBody        = null;
 
 Template.messageCreate.helpers({
     roomId      : function() {
@@ -34,16 +34,16 @@ Template.messageCreate.events({
 });
 
 function messageCached() {
-    var cache = Session.get('messagesCache') || {};
-
-    cache[$roomId.val()] = $messageBody.val();
-
-    Session.set('messagesCache', cache);
+    //var cache = Session.get('messagesCache') || {};
+    //
+    //cache[$roomId.val()] = $messageBody.val();
+    //
+    //Session.set('messagesCache', cache);
 }
 
 function messageSend() {
     var messageBody     = $messageBody.val().trim(),
-        roomId          = $roomId.val();
+        roomId          = Session.get('currentRoomId');
 
     if (roomId && messageBody) {
         Meteor.call('messageSend', {
@@ -59,46 +59,50 @@ function messageSend() {
     }
 }
 
-Template.messageCreate.rendered = function() {
-    $messageBody    = $('#messageBody');
-    $roomId         = $('#roomId');
+Template.messageCreate.created = function() {
+    watchRooms = Deps.autorun(function() {
+        RoomsOpen.find({
+            _id : Session.get('currentRoomId')
+        }).observe({
+            added   : function(room) {
 
-    var $messageList    = $('#messageList'),
-        $document       = $(document),
-        offsets         = 0,
-        magicHeight     = 40;
+            },
+            removed : function(room) {
 
-    $document.on('resize orientationChange', function() {
-        var offsetTop       = $messageList.offset().top,
-            paddingTop      = parseInt($messageList.css('paddingTop'), 10),
-            paddingBottom   = parseInt($messageList.css('paddingBottom'), 10);
-
-        offsets = offsetTop + paddingTop + paddingBottom + magicHeight;
-    }).trigger('resize');
-
-    $messageList.autoScroll({
-        scrollTo    : -1,
-        scrollOn    : function(scrollData) {
-            console.log('scrolled', scrollData);
-        },
-        scrollOnTop : function(scrollData) {
-            console.log('load more messages', scrollData);
-        }
+            }
+        });
     });
+};
+
+Template.messageCreate.rendered = function() {
+    var $messagesSeparator  = $('#messagesSeparator'),
+        $messagesWrapper    = $('#messagesWrapper'),
+        $messagesList       = $('#messagesList'),
+        magicHeight         = 40,
+        offset              = 0;
+
+    $messageBody            = $('#messageBody');
+
+    $(window).on('resize orientationChange', function() {
+        var paddingTop      = parseInt($messagesList.css('paddingTop'), 10) || 0,
+            paddingBottom   = parseInt($messagesList.css('paddingBottom'), 10) || 0;
+
+        $messagesWrapper.css('top', $messagesSeparator.offset().top);
+
+        offset = $messagesWrapper.outerHeight(true) - (paddingTop + paddingBottom + magicHeight);
+    }).trigger('resize');
 
     $messageBody.autoHeight({
         changeHeight    : function(size) {
-            $messageList
-                .height($document.outerHeight(true) - offsets - size.mainHeight)
+            $messagesList
+                .height(offset - size.mainHeight)
                 .autoScroll('scroll');
         }
     }).focus();
+};
 
-    Messages.find({
-        roomId  : $roomId.val()
-    }).observe({
-        added   : function() {
-            $messageList.autoScroll('scroll');
-        }
-    })
+Template.messageCreate.destroyed = function() {
+    if (watchRooms) {
+        watchRooms.stop();
+    }
 };

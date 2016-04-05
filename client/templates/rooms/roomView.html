@@ -11,23 +11,26 @@
         {{/each}}
     </div>
 
-    <div id="messageList" class="row clearfix message-list">
-        {{#each messagesRead}}
+    <div id="messagesSeparator" class="clearfix"></div>
+    <div id="messagesWrapper">
+        <div id="messagesList" class="row clearfix message-list">
+            {{#each messagesRead}}
             <!--{{#if read}}-->
                 {{> messageView}}
-            <!--{{/if}}-->
-        {{/each}}
-
-        {{#if messagesNotRead.count}}
-            {{#each messagesNotRead}}
-
+                    <!--{{/if}}-->
             {{/each}}
-        {{/if}}
-    </div>
 
-    <div class="message-create-form">
-        {{#if currentUser}}
-            {{> messageCreate}}
-        {{/if}}
+            {{#if messagesNotRead.count}}
+                {{#each messagesNotRead}}
+
+                {{/each}}
+            {{/if}}
+        </div>
+
+        <div class="message-create-form">
+            {{#if currentUser}}
+                {{> messageCreate}}
+            {{/if}}
+        </div>
     </div>
 </template>

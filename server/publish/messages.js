@@ -32,3 +32,19 @@ Meteor.publish('roomMessages', function(roomId) {
         }
     });
 });
+
+Meteor.publish('roomMessagesPrevious', function(roomId, firstMessage) {
+    var firstMessage    = Messages.findOne(firstMessage);
+
+    return Messages.find({
+        roomId  : roomId,
+        created : {
+            $lt     : firstMessage.created
+        }
+    }, {
+        sort    : {
+            created : -1
+        },
+        limit   : 5
+    });
+});
