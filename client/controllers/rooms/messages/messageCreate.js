@@ -2,7 +2,7 @@
  * Created by Mykhailo_Bohdanov on 30/03/2016.
  */
 
-var watchRooms          = null;
+var watchRooms          = null,
     $messageBody        = null;
 
 Template.messageCreate.helpers({
