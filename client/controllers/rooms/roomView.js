@@ -3,11 +3,13 @@
  */
 
 function getRoomScroll(roomId) {
-    var roomScroll = localStorage.getItem('roomScroll.' + roomId);
-    return roomScroll ? parseInt(roomScroll, 10) : 0;
+    return RoomsOpen.scrolls[roomId] || 0;
 }
 function setRoomScroll(roomId, scroll) {
-    localStorage.setItem('roomScroll.' + roomId, scroll);
+    RoomsOpen.scrolls[roomId] = scroll;
+}
+function removeRoomScroll(roomId) {
+    delete RoomsOpen.scrolls[roomId];
 }
 
 var $messagesWrapper    = null,
@@ -49,6 +51,7 @@ Template.roomView.events({
     'click .room-item-exit': function (e) {
         e.preventDefault();
 
+        removeRoomScroll(this._id);
         RoomsOpen.close(this._id);
     }
 });
@@ -83,10 +86,12 @@ Template.roomView.rendered = function() {
                             });
 
                             updated = false;
-                            Meteor.subscribe('roomMessagesPrevious', roomId, firstMessage._id, function() {
-                                updated = true;
-                                $messagesList.autoScroll('scrollTopOffset');
-                            });
+                            RoomsOpen
+                                .subscribers[roomId]
+                                .push(Meteor.subscribe('roomMessagesPrevious', roomId, firstMessage._id, function() {
+                                    updated = true;
+                                    $messagesList.autoScroll('scrollTopOffset');
+                                }));
                         }
                     }
                 });

@@ -90,72 +90,71 @@
 
 (function($) {
     function AutoScroll($el, options) {
-        if (this.inited) {
-            return;
-        }
+        this.$el    = $el;
+        this.el     = $el[0];
+        this.conf   = _.extend({}, AutoScroll.defaults, options);
 
-        this.$el        = $el;
-        this.el         = $el[0];
-        this.options    = _.extend({}, AutoScroll.defaults, options);
+        this.scrollEvent    = function(e) {
+            e.preventDefault();
+
+            var prevent = {
+                    scroll      : this._scroll.scroll,
+                    scrollHeight: this._scroll.scrollHeight,
+                    height      : this._scroll.height
+                },
+                changed = {
+                    scroll      : this.el.scrollTop,
+                    scrollHeight: this.el.scrollHeight,
+                    height      : this.$el.outerHeight(true)
+                };
+
+            _.extend(this._scroll, changed);
+
+            this._scroll.userScroll = this.inited ? changed.scroll + changed.height === changed.scrollHeight : false;
+
+            if (this.inited && this.conf.onScroll) {
+                this.conf.onScroll.call(this, changed, prevent);
+            }
+
+            if (this.inited && this.conf.onScrollTop && !changed.scroll) {
+                this.conf.onScrollTop.call(this, changed, prevent);
+            }
+        }.bind(this);
     }
     _.extend(AutoScroll, {
         defaults    : {
             onScroll    : null,
             onScrollTop : null,
-            firstScroll : -1,
+            startFrom   : -1,
             scrollSpeed : 200
         }
     });
     _.extend(AutoScroll.prototype, {
         init        : function() {
-            if (this.inited) {
-                return;
-            }
-
-            this.scrollData = {
-                scroll      : 0,
-                maxScroll   : 0,
-                height      : 0
+            this._scroll = {
+                userScroll  : this.conf.startFrom >= 0,
+                scroll      : this.el.scrollTop,
+                scrollHeight: this.el.scrollHeight,
+                height      : this.$el.outerHeight(true)
             };
 
             this.$el
-                .on('scroll.autoScroll', function() {
-                    var prevScroll      = {
-                            scroll      : this.scrollData.scroll,
-                            maxScroll   : this.scrollData.maxScroll,
-                            height      : this.scrollData.height
-                        },
-                        updatedScroll   = {
-                            scroll      : this.el.scrollTop,
-                            maxScroll   : this.el.scrollHeight,
-                            height      : this.$el.outerHeight(true)
-                        };
-
-                    _.extend(this.scrollData, updatedScroll);
-
-                    if (this.inited && this.options.onScroll) {
-                        this.options.onScroll.call(this, updatedScroll, prevScroll);
-                    }
-
-                    if (this.inited && this.options.onScrollTop && updatedScroll.scroll === 0) {
-                        this.options.onScrollTop.call(this, updatedScroll, prevScroll);
-                    }
-                }.bind(this))
-                .trigger('scroll.autoScroll');
-
-            this.scrollTo(this.options.firstScroll, true);
+                .on('scroll.autoScroll', this.scrollEvent)
+                .trigger('scroll');
 
             this.inited = true;
         },
         scroll      : function() {
-            if (this.scrollData.maxScroll - this.scrollData.height == this.scrollData.scroll) {
-                this.scrollTo(this.el.scrollHeight);
+            this._scroll.scrollHeight = this.el.scrollHeight;
+
+            if (!this._scroll.userScroll) {
+                this.scrollTo(-1);
             }
         },
         scrollTo    : function(to, animateOff) {
             if (_.isNumber(to)) {
                 if (to < 0) {
-                    to = this.scrollData.maxScroll - this.scrollData.height;
+                    to  = this._scroll.scrollHeight - this._scroll.height;
                 }
 
                 if (!animateOff) {
@@ -163,7 +162,7 @@
                         .stop()
                         .animate({
                             scrollTop   : to
-                        }, this.options.scrollSpeed);
+                        }, this.conf.scrollSpeed);
                 } else {
                     this.$el
                         .stop()
@@ -172,9 +171,6 @@
             } else {
                 this.scrollTo($(to).offset().top - this.$el.offset().top, animateOff);
             }
-        },
-        scrollTopOffset : function() {
-
         },
         destroy     : function() {
             this.$el
@@ -197,12 +193,12 @@
             var $self   = $(this),
                 autoScroll  = $self.data('autoScroll');
 
-            if (method === 'init' && (!autoScroll || !(autoScroll instanceof AutoScroll) || !autoScroll.inited)) {
+            if (method === 'init' && (!autoScroll || !(autoScroll instanceof AutoScroll))) {
                 autoScroll  = new AutoScroll($self, args[0]);
                 $self.data('autoScroll', autoScroll);
             }
 
-            if (autoScroll && autoScroll instanceof AutoScroll) {
+            if (autoScroll && autoScroll instanceof AutoScroll && autoScroll[method]) {
                 autoScroll[method].apply(autoScroll, args);
             }
         });

@@ -5,6 +5,7 @@
 //// - - - - Open rooms collection
 RoomsOpen = new Meteor.Collection(null);
 _.extend(RoomsOpen, {
+    scrolls     : {},
     subscribers : {},
     open    : function(roomId) {
         var room = Rooms.findOne(roomId);
@@ -19,8 +20,12 @@ _.extend(RoomsOpen, {
         return room;
     },
     subscribe   : function(roomId) {
+        if (!this.subscribers[roomId]) {
+            this.subscribers[roomId] = [];
+        }
+
         setTimeout(function() {
-            this.subscribers[roomId] = Meteor.subscribe('roomMessages', roomId);
+            this.subscribers[roomId].push(Meteor.subscribe('roomMessages', roomId));
         }.bind(this), 0);
     },
     close       : function(roomId) {
@@ -39,7 +44,10 @@ _.extend(RoomsOpen, {
     },
     unsubscribe : function(roomId) {
         if (this.subscribers[roomId]) {
-            this.subscribers[roomId].stop();
+            _.each(this.subscribers[roomId], function(subscribe) {
+                subscribe.stop();
+            });
+
         }
 
         delete this.subscribers[roomId];
